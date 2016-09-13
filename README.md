@@ -1,2 +1,2 @@
 # nhulz.github.io
-Generic repository for hosting class projects
+Repo for hosting class projects
