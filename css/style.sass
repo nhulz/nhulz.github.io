@@ -16,7 +16,7 @@ body
 
 
   .container
-    margin: 100px
+    margin: 6vw
 
     #info
       border: 3px solid black
@@ -46,13 +46,21 @@ body
       color: white
       cursor: pointer
 
+a
+  text-decoration: none
 
+a:visited
+  color: inherit
 
 
 h1
-  font-size: 5rem
+  font-size: 3rem
   color: $blue
-  margin: 100px
+  margin: 6vw
+
+  @media (min-width: 401px)
+    font-size: 5rem
+
 
 h2
   margin: 0
