@@ -1,103 +1,76 @@
 ---
 layout: default
 ---
-
-<svg width="100%" height="100%">
-
+<script src="https://d3js.org/d3.v4.min.js"></script>
 
 
-<!-- Consentric circles -->
-<g width="500px" height="650px" y="" x="">
-    <circle cx="232px" cy="397px" stroke="black" fill="none" stroke-width="10px" r="185px"></circle>
-    <circle cx="232px" cy="397px" fill="#FFEBE7" r="185px"></circle>
-    <!-- Extruding Circle -->
-    <circle cx="128px" cy="540px" stroke="black" fill="white" fill-opacity="0.5" stroke-width="5" r="63px"></circle>
-    <!-- -->
-    <circle cx="232px" cy="397px" stroke="black" fill="none" stroke-width="10px" r="185px"></circle>
-    <circle cx="232px" cy="397px" stroke="#FF82A9" fill="black" stroke-width="10px" r="168px"></circle>
-    <circle cx="232px" cy="397px" fill="none" stroke-width="16" r="90px" stroke="#FFC0BE"></circle>
-    <circle cx="232px" cy="397px" stroke="#7F95D1" fill="none" stroke-width="12" r="52px"></circle>
-</g>
+<script>
 
-<!-- Masked circles -->
-<svg id="circle-cutoff" width="1010px" height="600px" y="300" x="200">
-  <defs>
-    <clipPath id="cut-off-bottom-1" style="
-    transform: rotate(-16deg);
-    transform-origin: center; ">
-      <rect x="160" y="152" width="250" height="120"></rect>
-    </clipPath>
-    <clipPath id="cut-off-bottom-2" style="
-    transform: rotate(-16deg);
-    transform-origin: center; ">
-      <rect x="360" y="104" width="250" height="110"></rect>
-    </clipPath>
-  </defs>
-  <circle cx="286px" cy="269px" stroke="black" fill="none" stroke-width="10" r="100px" clip-path="url(#cut-off-bottom-1)"></circle>
-  <circle cx="286px" cy="269px" stroke="#EE6C4D" fill="white" stroke-width="10" r="90px" clip-path="url(#cut-off-bottom-1)"></circle>
-  <circle cx="484px" cy="219px" stroke="black" fill="none" stroke-width="10" r="100px" clip-path="url(#cut-off-bottom-2)"></circle>
-  <circle cx="484px" cy="219px" stroke="#7F95D1" fill="white" stroke-width="10" r="90px" clip-path="url(#cut-off-bottom-2)"></circle>
-</svg>
+var data = [23, 54, 34];
+var svg = d3.select("body").append("svg");
 
-  <!-- Three circles under the masked circles -->
-  <svg width="1000px" height="800px" y="300" x="200">
-  <line x1="90" y1="332" x2="712" y2="152" stroke-width="4" stroke="black"></line>
+var circles = svg.selectAll("circle")
+  .data(data);
 
-  <circle cx="500px" cy="269px" stroke="black" fill="none" stroke-width="8" r="50"></circle>
-  <circle cx="500px" cy="269px" stroke="#E0FBFC" fill="white" stroke-width="8" r="42"></circle>
+  circles.enter().append("circle")
+    .attr("cx", function(d, i){
+      return 60 + (120 * i);
+    })
+    .attr("cy", 20)
+    .attr("r", function(d){
+      return d;
+    });
 
-  <circle cx="400" cy="298" stroke="black" fill="none" stroke-width="8" r="50"></circle>
-  <circle cx="400px" cy="298px" stroke="#98C1D9" fill="white" stroke-width="8" r="42"></circle>
+data.forEach(function(){
 
-  <circle cx="300" cy="327" stroke="black" fill="none" stroke-width="8" r="50"></circle>
-  <circle cx="300px" cy="327px" stroke="#3D5A80" fill="white" stroke-width="8" r="42"></circle>
-  </svg>
+});
 
-  <!-- Black triangle -->
-  <polygon stroke="black" fill="black" stroke-width="0" points="521,746 586,669 581,761"></polygon>
-  <polygon fill="white" stroke-width="0" points="550,738 566,719 561,741"></polygon>
+// * = selects all direct children
 
-  <!-- Cut-through line over circles -->
-  <line x1="750" y1="734" x2="621" y2="237" stroke-width="4" stroke="black"></line>
-
-  <!-- Three lines -->
-  <line x1="753" y1="442" x2="821" y2="223" stroke-width="4" stroke="black"></line>
-  <line x1="742" y1="440" x2="810" y2="220" stroke-width="4" stroke="black"></line>
-  <line x1="763" y1="452" x2="832" y2="227" stroke-width="4" stroke="black"></line>
-
-  <!-- Little circles -->
-  <circle cx="732" cy="360" stroke="#2B2D42" fill="#EDF2F4" stroke-width="4" r="20"></circle>
-  <circle cx="857" cy="306" stroke="#FFB238" fill="#FABC3C" stroke-width="4" r="17"></circle>
-  <!-- Two triangles -->
-  <polygon stroke="black" fill="#A06B9A" stroke-width="8px" points="812,405 890,329 907,413"/>
-  <polygon class="blend-mode-multiply" stroke="black" fill="#A06B9A" stroke-width="8px" points="959,667 1040,429 907,413"/>
-
-  <line x1="1104" y1="608" x2="1306" y2="513" stroke-width="5" stroke="black"></line>
-  <circle class="blend-mode-multiply" cx="1020" cy="405" stroke="#ce423a" fill="#FE5F55" stroke-width="4" r="86"></circle>
-
-  <!-- big triangle -->
-  <polygon class="blend-mode-multiply" stroke="black" fill="#EDF2F4" stroke-width="4px" points="1044,682 1260,682 1210,234"/>
-  <line x1="910" y1="683" x2="1376" y2="683" stroke-width="5" stroke="black"></line>
-
-  <!-- Lines over big triangle -->
-  <line x1="993" y1="621" x2="1152" y2="547" stroke-width="5" stroke="black"></line>
-  <line x1="999" y1="633" x2="1155" y2="561" stroke-width="5" stroke="black"></line>
-  <line x1="1104" y1="608" x2="1306" y2="513" stroke-width="5" stroke="black"></line>
-
-  <rect x="870" y="697" width="40px" height="40" fill="blue" stroke="black" stroke-width="8px"></rect>
+//   var user = {
+//     name: "Nathan",
+//     color: "blue",
+//     loggedIn: true,
+//     hometown: {
+//       city: "Hudson",
+//       state: "Ohio"
+//     }
+//   }
+//
+//   var things = ["thing-one", 12, "thing-two", {pet: "dog", type: "lab"}];
+//
+//   console.log(user);
+//   console.log(things[3].pet);
+//
+//   if (user.loggedIn){
+//     console.log("Logged in!");
+//   }
+//   else{
+//     console.log("not logged in!");
+//   }
+//
+//
+// var myMath = function(num){
+//   console.log(num * 2);
+// }
+//
+// myMath(41);
+//
 
 
-<rect x="1500" y="0" width="110" height="110" fill="#F8F32B" stroke="black" stroke-width="8px" transform="translate(310 -150) rotate(55 900 0)"></rect>
+// var numbers = [2, 4, 6, 8, 10];
+//
+// var myMath = function(num){
+//   num = num * 2 + 10;
+//   return num;
+// }
+//
+// console.log(numbers);
+// number.forEach(function(n, i) {
+//   numbers[i] = myMath(n);
+// });
 
-</svg> <!-- Main canvas -->
 
+// built in array funtions: length, arrays start at 0
 
-
-<img id="kandinsky" src="/img/kandinsky.jpg">
-
-
-<!-- Homework: Recreate Google Kandinsky Image
-#293241
--->
-
-<!-- <rect class="hi" x="5px" y="100px" width="200px" height="100px" fill="blue"/> -->
+</script>
