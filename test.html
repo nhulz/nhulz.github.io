@@ -6,24 +6,60 @@ layout: default
 
 <script>
 
-var data = [23, 54, 34];
-var svg = d3.select("body").append("svg");
+var arr = [23, 54, 34];
+var svg = d3.select("body").append("svg")
+  .attr("width", window.innerWidth)
+  .attr("height", 1000);
 
-var circles = svg.selectAll("circle")
-  .data(data);
+var randomData = function(){
+  var randomArray = [];
+  var num = Math.ceil(Math.random() * 20);
+  for (var i = 0; i < num; i++){
+    randomArray.push(Math.random() * 50);
+  }
+  return randomArray;
+}
 
-  circles.enter().append("circle")
-    .attr("cx", function(d, i){
-      return 60 + (120 * i);
-    })
-    .attr("cy", 20)
-    .attr("r", function(d){
+
+var draw = function(){
+
+  var data = randomData();
+
+  var circles = svg.selectAll("circle")
+    .data(data);
+
+    circles.enter().append("circle")
+      .attr("cx", function(d, i){ return 60 + (120 * i); })
+      .attr("cy", 100)
+      .attr("r", function(d){
+        return d;
+      });
+
+    circles
+    .transition()
+    .duration(1000)
+    .attr("fill","green").attr("r", function(d){
       return d;
     });
 
-data.forEach(function(){
+    circles.exit()
+    .transition().duration(500)
+    .attr("r", 0)
+    .attr("fill","red")
+    .remove();
 
-});
+    circles.on('click', function() {
+      circles
+      .transition().duration(500)
+      .attr("r", 0)
+      .attr("fill","red")
+      .remove();
+    });
+  }
+
+
+draw();
+
 
 // * = selects all direct children
 
