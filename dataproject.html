@@ -1,6 +1,8 @@
 ---
 layout: default
 ---
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
 
 <h1>Why do we sleep alone?</h1>
 <h2 style="margin: 6vw;"><a href="https://github.com/fivethirtyeight/data/blob/master/sleeping-alone-data/sleeping-alone-data.csv">The data, courtesy of FiveThirtyEight</a></h2>
@@ -10,3 +12,128 @@ layout: default
 <li>What does income tell us about people's relationship health?</li>
 <li>What is the main reason why people sleep alone when in a relationship?</li>
 </ul>
+
+<svg width=600 height=600></svg>
+
+
+<script>
+
+//rStatus
+//rLength
+//separateBeds
+//sleepLocation
+//sleepLocationOther
+//sleepLocationPartner
+//sleepLocationPartnerOther
+//separateReason0
+//separateReason1
+//separateReason2
+//separateReason3
+//separateReason4
+//separateReason5
+//separateReason6
+//separateReason7
+//separateReason8
+//separateReason9
+//firstSeperateBed
+//stayingTogether
+//sleepBetterSeperate
+//sexImproved
+//occupation
+//occupationOther
+//gender
+//age
+//income
+//education
+//location
+
+var genderDraw = function(data){
+  var svg = d3.select("svg");
+  var circles = svg.selectAll("circle").data(data);
+  var genderData = d3.extent(data, function(d, i){
+    return d.values.length;
+  });
+  var radius = d3.scaleLinear();
+  console.log(genderData);
+
+  circles.enter().append("circle")
+    .attr("cy", 60)
+    .attr("cx", function(d, i){
+      return 60 + (120 * i);
+    })
+    .attr("r", function(d, i){
+      return (radius(d.values.length) / 10);
+    });
+};
+
+var locationDraw = function(data){
+  var svg = d3.select("svg");
+  var circles = svg.selectAll("circle").data(data);
+  var locationData = d3.extent(data, function(d, i){
+    return d.values.length
+  });
+};
+
+
+
+
+
+d3.csv("data/sleeping-alone-data.csv", function(error, data){
+  //console.log(error, file);
+                          // data, index
+  data = data.filter(function(d, i) {
+    return i != 0; // D3 automatically makes the 1st row in a CSV file the headers, so when you call the first row it is technically the second row in the data set. in the case of java that means to call the "first row" i would actually call 0
+  });
+
+  var nestedData = d3.nest().key(function(d, i, key){
+      return d.gender;
+    })
+    // .key(function(d, i){
+    //   return d["Household Income"];
+    // });
+    .entries(data);
+
+  nestedData = nestedData.filter(function(d, i){
+    return d.key != ""; // dont return people who didn't include a gender
+  });
+
+
+  console.log (nestedData);
+
+  var maleLocations = [];
+  var femaleLocations = [];
+  var maleMountains = 0;
+  var femaleMountains = 0;
+
+ var test = nestedData.values.filter(function(d, i){
+   return d.key == "Mountain";
+ });
+
+  for (var i = 0; i < nestedData[0].values.length; i++){
+    maleLocations.push(nestedData[0].values[i].location);
+    if (nestedData[0].values[i].location == "Mountain") {
+      maleMountains++;
+    }
+  };
+
+// Make an array
+  for (var i = 0; i < nestedData[1].values.length; i++){
+    femaleLocations.push(nestedData[1].values[i].location);
+    if (nestedData[1].values[i].location == "Mountain") {
+      femaleMountains++;
+    }
+  };
+
+
+console.log(test);
+  console.log(femaleLocations);
+  console.log(maleLocations);
+  console.log("Males who live in mountain regions: " + maleMountains);
+  console.log("Females who live in mountain regions: " + femaleMountains);
+
+
+
+  genderDraw(nestedData);
+});
+
+</script>
