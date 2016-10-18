@@ -105,9 +105,9 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   var maleMountains = 0;
   var femaleMountains = 0;
 
- var test = nestedData.values.filter(function(d, i){
-   return d.key == "Mountain";
- });
+ // var test = nestedData.values.filter(function(d, i){
+ //   return d.key == "Mountain";
+ // });
 
   for (var i = 0; i < nestedData[0].values.length; i++){
     maleLocations.push(nestedData[0].values[i].location);
@@ -125,7 +125,7 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   };
 
 
-console.log(test);
+  console.log(test);
   console.log(femaleLocations);
   console.log(maleLocations);
   console.log("Males who live in mountain regions: " + maleMountains);
