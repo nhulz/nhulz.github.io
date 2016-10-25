@@ -1,0 +1,25 @@
+---
+layout: default
+---
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+
+
+<script>
+
+d3.csv("data/sleeping-alone-data.csv", function(error, data){
+  data = data.filter(function(d, i) {
+    return i != 0; // D3 automatically makes the 1st row in a CSV file the headers, so when you call the first row it is technically the second row in the data set. in the case of java that means to call the "first row" i would actually call 0
+  });
+
+
+  data.forEach(function(d, i){
+    for (var key in d){
+      if (i == 0) {
+        console.log(key, d[key], parseFloat(d[key]));
+      }
+    }
+  });
+});
+
+</script>
