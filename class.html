@@ -22,4 +22,24 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   });
 });
 
+country = data[0];
+
+var radius = d3.scaleLinear()
+    .domain([d3.min(values), d3.max(values)])
+    .range([10, 20]);
+
+var values = years.map(function(y){
+  return country[ y + "thing"];
+})
+
+
+d3.select("#thing")
+.attr("min", d3.min(number))
+.attr("max", d3.max(number))
+.on("input" , function(){
+  d3.selct("textbox").node().value = this.value;
+)};
+
+))
+
 </script>

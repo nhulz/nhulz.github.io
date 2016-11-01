@@ -45,37 +45,6 @@ layout: default
 //education
 //location
 
-var genderDraw = function(data){
-  var svg = d3.select("svg");
-  var circles = svg.selectAll("circle").data(data);
-  var genderData = d3.extent(data, function(d, i){
-    return d.values.length;
-  });
-  var radius = d3.scaleLinear();
-  console.log(genderData);
-
-  circles.enter().append("circle")
-    .attr("cy", 60)
-    .attr("cx", function(d, i){
-      return 60 + (120 * i);
-    })
-    .attr("r", function(d, i){
-      return (radius(d.values.length) / 10);
-    });
-};
-
-var locationDraw = function(data){
-  var svg = d3.select("svg");
-  var circles = svg.selectAll("circle").data(data);
-  var locationData = d3.extent(data, function(d, i){
-    return d.values.length
-  });
-};
-
-
-
-
-
 d3.csv("data/sleeping-alone-data.csv", function(error, data){
   //console.log(error, file);
                           // data, index
@@ -83,35 +52,208 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
     return i != 0; // D3 automatically makes the 1st row in a CSV file the headers, so when you call the first row it is technically the second row in the data set. in the case of java that means to call the "first row" i would actually call 0
   });
 
-  var nestedData = d3.nest()
+
+  console.log(" ");
+  console.log("-----------------------------------------------------------------------------");
+  console.log("How often people sleep separately");
+  console.log("-----------------------------------------------------------------------------");
+
+  // Returns information about how often people sleep separately
+  var separateBedData = d3.nest()
     .key(function(d, i, key){
-      return d.gender;
-    })
-    .key(function(d, i){
-      return d.location;
+      return d.separateBeds;
     })
     .entries(data);
 
-  nestedData = nestedData.filter(function(d, i){
+  separateBedData = separateBedData.filter(function(d, i){
+    return d.key != ""; // dont return people who didn't answer the question
+  });
+
+  separateBedData.forEach(function(d, i) {
+    var amount = separateBedData[i].values.length;
+    console.log(separateBedData[i].key + " " + amount);
+  });
+
+
+  console.log(" ");
+  console.log("-----------------------------------------------------------------------------");
+  console.log("When people started to sleep alone");
+  console.log("-----------------------------------------------------------------------------");
+
+  // Returns information about when people started to sleep separately, grouped by Gender
+  var firstSeperateBedData = d3.nest()
+    .key(function(d, i, key){
+      return d.gender + " " + d.firstSeperateBed })
+    .entries(data);
+
+  firstSeperateBedData = firstSeperateBedData.filter(function(d, i){
     return d.key != ""; // dont return people who didn't include a gender
   });
 
-  var menByLocation = nestedData[0].values.map(function(obj) {
-    var newObj = {
-      location: obj.key,
-      people: obj.values.length
-    };
-    return newObj;
+  firstSeperateBedData.forEach(function(d,i){
+    var x = firstSeperateBedData[i].values.length;
+    console.log(firstSeperateBedData[i].key + " " + x);
+    // console.log(x);
   });
-  console.log(menByLocation);
 
-  console.log(menByLocation[0].location)
+
+  console.log(" ");
+  console.log("-----------------------------------------------------------------------------");
+  console.log("Relationship improved");
+  console.log("-----------------------------------------------------------------------------");
+
+  var relationshipImprove = d3.nest()
+        .key(function(d, i, key){
+          return d.gender + " " + d.firstSeperateBed + " " + d.stayingTogether })
+          .entries(data);
+
+  relationshipImprove.forEach(function(d,i){
+    var x = relationshipImprove[i].values.length;
+    console.log(relationshipImprove[i].key + " " + x);
+    // console.log(x);
+  });
+
+
+  console.log(" ");
+  console.log("-----------------------------------------------------------------------------");
+  console.log("Sex life improved");
+  console.log("-----------------------------------------------------------------------------");
+
+
+  var sexImproved = d3.nest()
+        .key(function(d, i, key){
+          return d.gender + " " + d.firstSeperateBed + " " + d.sexImproved })
+          .entries(data);
+
+  sexImproved.forEach(function(d,i){
+    var x = sexImproved[i].values.length;
+    console.log(sexImproved[i].key + " " + x);
+    // console.log(x);
+  });
+
+  // var relationshipImprove = d3.nest()
+  //       .key(function(d, i, key){
+  //         return d.gender + " " + d.firstSeperateBed })
+  //       .key(function(d, i){
+  //         return d.stayingTogether
+  //       })
+  //       .key(function(d, i){
+  //         return d.sexImproved
+  //       })
+  //         .entries(data);
+  //
+  // relationshipImprove.forEach(function(d,i){
+  //   var x = relationshipImprove[i].values.length;
+  //   // console.log(relationshipImprove[i].key + " " + x);
+  //   // console.log(x);
+  // });
+
+// console.log(relationshipImprove);
+
+console.log(" ");
+console.log("-----------------------------------------------------------------------------");
+console.log("Reasons for sleeping separately");
+console.log("-----------------------------------------------------------------------------");
+
+
+
+var reasons = d3.nest()
+      .key(function(d, i){
+        return d.gender})
+      .entries(data);
+
+var reasonsMale = reasons[0].values;
+var reasonsFemale = reasons[1].values;
+
+var malesWhoAnswered1 = reasonsMale.filter(function(maleObject) {
+  return !maleObject.separateReason0 === '';
+});
+var numMalesWhoAnswered0 = malesWhoAnswered1.length;
+
+
+
+// generate a key for each "separate reason"
+function generateKeys(string, count) {
+  var result = [];
+  for (i = 0; i < count; i++) {
+    result[i] = string + i;
+  }
+  return result;
+}
+
+var reasonKeys = generateKeys('separateReason', 10);
+
+// filters each seperateReason and returns the number or people who responded
+function calcNumResponses(key, array) {
+  var filteredArray = array.filter(function(arrayEntry) {
+    return arrayEntry[key] !== '';
+  });
+  return filteredArray.length;
+}
+
+// takes the array of keys and the array of objects and maps the number of
+// responses to the array of keys
+function getReasonCounts(keysArray, reasonsArray) {
+  return keysArray.map(function(key) {
+    return calcNumResponses(key, reasonsArray);
+  })
+};
+
+console.log(getReasonCounts(reasonKeys, reasonsMale));
+console.log(getReasonCounts(reasonKeys, reasonsFemale));
+
+
+
+
+  // var menByLocation = nestedData[0].values.map(function(obj) {
+  //   var newObj = {
+  //     location: obj.key,
+  //     people: obj.values.length
+  //   };
+  //   return newObj;
+  // });
 
 //   console.log(nestedData[0].values.filter(function(d, i){
 //     return d.key == "Pacific";
 //   })[0].values.length, pacificMenLength
 // );
-  console.log (nestedData);
+
+
+
+
+
+
+// var genderDraw = function(data){
+//   var svg = d3.select("svg");
+//   var circles = svg.selectAll("circle").data(data);
+//   var genderData = d3.extent(data, function(d, i){
+//     return d.values.length;
+//   });
+//   var radius = d3.scaleLinear();
+//   console.log(genderData);
+//
+//   circles.enter().append("circle")
+//     .attr("cy", 60)
+//     .attr("cx", function(d, i){
+//       return 60 + (120 * i);
+//     })
+//     .attr("r", function(d, i){
+//       return (radius(d.values.length) / 10);
+//     });
+// };
+//
+// var locationDraw = function(data){
+//   var svg = d3.select("svg");
+//   var circles = svg.selectAll("circle").data(data);
+//   var locationData = d3.extent(data, function(d, i){
+//     return d.values.length
+//   });
+// };
+
+
+
+
+
 
 //   var maleLocations = [];
 //   var femaleLocations = [];
@@ -144,7 +286,7 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
 //   console.log("Males who live in mountain regions: " + maleMountains);
 //   console.log("Females who live in mountain regions: " + femaleMountains);
 
-  genderDraw(nestedData);
+  // genderDraw(nestedData);
 });
 
 </script>
