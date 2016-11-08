@@ -1,17 +1,56 @@
 ---
-layout: default
+layout: infographic
 ---
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<!-- <a href="/img/nathan-draft-1.png">draft 1</a> -->
+
+<div class="container">
+
+<section id="mainTitle">
+  <div class="centeredText">
+    <h1>Why do we sleep alone?</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod facilisis augue ac varius. Nulla vitae ligula augue. Nam cursus mattis ante vitae tempor. Donec nec eleifend urna. Suspendisse faucibus faucibus rutrum. Etiam ultricies enim quis faucibus tristique.</p>
+  </div>
+</section>
+
+<section id="pieChartSection">
+  <svg id="pieChartSVG" class= width=100% height=600>
+    <g id="bracket-left" stroke-width="1" fill="none" transform="translate(250, 25)">
+        <path d="M68.0866323,0 C68.0866323,0 -22.6893793,33.0076325 5.73250231,150.578697 C34.1543839,268.149762 -4.97379915e-14,268.284861 -4.97379915e-14,268.284861" id="Path-2" stroke="#4A4A4A" stroke-width="2"></path>
+        <path d="M68.0866323,538.284861 C68.0866323,538.284861 -22.6893793,505.277228 5.73250231,387.706163 C34.1543839,270.135098 4.97379915e-14,270 4.97379915e-14,270" id="Path-2" stroke="#4A4A4A" stroke-width="2"></path>
+    </g>
+    <text x="122" y="300" font-family="American Typewriter" font-size="20px" fill="black">Sleeps alone</text>
+
+    <g id="bracket-right" stroke-width="1" fill="none" transform="translate(920, 295) rotate(-180.000000) translate(-235.500000, -269.500000) translate(201.000000, 0.000000)">
+        <path d="M68.0866323,0 C68.0866323,0 -22.6893793,33.0076325 5.73250231,150.578697 C34.1543839,268.149762 -4.97379915e-14,268.284861 -4.97379915e-14,268.284861" id="Path-2" stroke="#4A4A4A" stroke-width="2"></path>
+        <path d="M68.0866323,538.284861 C68.0866323,538.284861 -22.6893793,505.277228 5.73250231,387.706163 C34.1543839,270.135098 4.97379915e-14,270 4.97379915e-14,270" id="Path-2" stroke="#4A4A4A" stroke-width="2"></path>
+    </g>
+    <text x="960" y="300" font-family="American Typewriter" font-size="20px" fill="black">Never sleeps alone</text>
+  </svg>
+</section>
 
 
-<h1>Why do we sleep alone?</h1>
-<h2 style="margin: 6vw;"><a href="https://github.com/fivethirtyeight/data/blob/master/sleeping-alone-data/sleeping-alone-data.csv">The data, courtesy of FiveThirtyEight</a></h2>
+<section id="dotChartSection">
+  <div class="text-container">
+    <h2 id="dotChartTitle">When do people start sleeping alone, does it improve sex life?</h2>
+    <p id="dotChartP" class="small-p">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod facilisis augue ac varius. Nulla vitae ligula augue. Nam cursus mattis ante vitae tempor. Donec nec eleifend urna. Suspendisse faucibus faucibus rutrum. Etiam ultricies enim quis faucibus tristique.</p>
+    <button class="dotChartBtn" id="sexBtn">Sex Life</button>
+    <button class="dotChartBtn" id="relationshipBtn">Relationship</button>
+  </div>
+  <svg id="dotChartSVG" class="" width=100% height=600></svg>
+</section>
 
-<ul style="padding-left: 6rem;">
-<li><a href="/img/nathan-draft-1.png">draft 1</a><li>
-</ul>
+<section id="circleChartSection">
+  <h2 id="dotChartTitle">When do people start sleeping alone, does it improve sex life?</h2>
+  <p id="dotChartP" class="small-p">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod facilisis augue ac varius. Nulla vitae ligula augue. Nam cursus mattis ante vitae tempor. Donec nec eleifend urna. Suspendisse faucibus faucibus rutrum. Etiam ultricies enim quis faucibus tristique.</p>
+  <svg id="circleChartSVG" class="" width=100% height=600></svg>
+</section>
 
-<svg width=600 height=600></svg>
+
+
+</div>
+
+
 
 
 <script>
@@ -70,9 +109,54 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   });
 
   separateBedData.forEach(function(d, i) {
-    var amount = separateBedData[i].values.length;
+    var amount = d.values.length;
     console.log(separateBedData[i].key + " " + amount);
   });
+
+
+  var div = d3.select("#pieChartSection").append("div").attr("class", "toolTip");
+
+
+
+  var arc = d3.arc()
+      .outerRadius(300 - 10)
+      .innerRadius(0);
+
+  var pieData = d3.pie().value(function(d){
+    return d.values.length
+  })(separateBedData);
+
+  var color = d3.scaleOrdinal()
+    // .domain(["Hi, there, I, am, bob, crack"])
+    .range(["#6BA4E7", "#8CB8ED", "#50E3C2", "#ADCDF2", "#DEEBFA", "#4A90E2", "#4A90E2"]);
+
+  var pieGroup = d3.select("#pieChartSVG")
+    .append("g")
+    .attr("transform", "translate(" + 600 + "," + 600 / 2 + ")");
+
+  var pieSlices = pieGroup.selectAll("path").data(pieData);
+
+  pieSlices.enter().append("path")
+    .attr("d", arc)
+    .style("fill", function(d, i  ) {
+      return color(d.data.key);
+    });
+
+
+
+    // var pieLabel = d3.select("#pieChartSVG")
+    //   .append("text")
+    //   .attr("transform", "translate(" + 0 + "," + 0 + ")");
+
+    // var text = pieLabel.selectAll("text").data(pieData)
+    // .enter()
+    // .append("text")
+    // .text("test");
+
+    // var textLabels = text
+    // .text("test");
+
+  console.log(pieData);
 
 
   console.log(" ");
