@@ -14,6 +14,8 @@ layout: infographic
 </section>
 
 <section id="pieChartSection">
+  <div class="toolTip" style="opacity: 0;"></div>
+
   <svg id="pieChartSVG" class= width=100% height=600>
     <g id="bracket-left" stroke-width="1" fill="none" transform="translate(250, 25)">
         <path d="M68.0866323,0 C68.0866323,0 -22.6893793,33.0076325 5.73250231,150.578697 C34.1543839,268.149762 -4.97379915e-14,268.284861 -4.97379915e-14,268.284861" id="Path-2" stroke="#4A4A4A" stroke-width="2"></path>
@@ -37,7 +39,16 @@ layout: infographic
     <button class="dotChartBtn" id="sexBtn">Sex Life</button>
     <button class="dotChartBtn" id="relationshipBtn">Relationship</button>
   </div>
-  <svg id="dotChartSVG" class="" width=100% height=600></svg>
+  <svg id="dotChartSVG" class="">
+    <line x1="250" y1="700" x2="1500" y2="700" stroke-width="4" stroke="black"></line>
+    <line x1="250" y1="100" x2="250" y2="700" stroke-width="4" stroke="black"></line>
+    <text text-anchor="end" x="220" y="200" font-family="American Typewriter" font-size="16px" fill="black">Strongly agree</text>
+    <text text-anchor="end" x="220" y="300" font-family="American Typewriter" font-size="16px" fill="black">Somewhat disagree</text>
+    <text text-anchor="end" x="220" y="400" font-family="American Typewriter" font-size="16px" fill="black">Neither agree nor disagree</text>
+    <text text-anchor="end" x="220" y="500" font-family="American Typewriter" font-size="16px" fill="black">Somewhat disagree</text>
+    <text text-anchor="end" x="220" y="600" font-family="American Typewriter" font-size="16px" fill="black">Strongly disagree</text>
+    
+  </svg>
 </section>
 
 <section id="circleChartSection">
@@ -80,7 +91,7 @@ layout: infographic
 //separateReason7
 //separateReason8
 //separateReason9
-//firstSeperateBed
+//firstSeparateBed
 //stayingTogether
 //sleepBetterSeperate
 //sexImproved
@@ -118,13 +129,8 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
 
   separateBedData.forEach(function(d, i) {
     var amount = d.values.length;
-    console.log(separateBedData[i].key + " " + amount);
+  //  console.log(separateBedData[i].key + " " + amount);
   });
-
-
-  var div = d3.select("#pieChartSection").append("div").attr("class", "toolTip");
-
-
 
   var arc = d3.arc()
       .outerRadius(300 - 10)
@@ -135,7 +141,6 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   })(separateBedData);
 
   var color = d3.scaleOrdinal()
-    // .domain(["Hi, there, I, am, bob, crack"])
     .range(["#6BA4E7", "#8CB8ED", "#50E3C2", "#ADCDF2", "#DEEBFA", "#4A90E2", "#4A90E2"]);
 
   var pieGroup = d3.select("#pieChartSVG")
@@ -144,11 +149,30 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
 
   var pieSlices = pieGroup.selectAll("path").data(pieData);
 
+  var div = d3.select("#pieChartSection").append("div")
+  .attr("class", "toolTip")
+  .style("opacity", 0);
+
   pieSlices.enter().append("path")
     .attr("d", arc)
     .style("fill", function(d, i  ) {
       return color(d.data.key);
-    });
+    })
+    .on("mousemove", function(d) {
+      var position = d3.mouse(d3.select("body").node());
+          div.transition()
+              .duration(200)
+              .style("opacity", .9);
+          	div.html(d.data.key + d.data.values.length )
+              .style("left", (position[0]) + "px")
+              .style("top", (position[1] - 28) + "px");
+          })
+      .on("mouseout", function(d) {
+          div.transition()
+              .duration(500)
+              .style("opacity", 0);
+            });
+
 
 
 
@@ -164,7 +188,7 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
     // var textLabels = text
     // .text("test");
 
-  console.log(pieData);
+  // console.log(pieData);
 
 
   console.log(" ");
@@ -173,21 +197,91 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   console.log("-----------------------------------------------------------------------------");
 
   // Returns information about when people started to sleep separately, grouped by Gender
-  var firstSeperateBedData = d3.nest()
+  var firstSeparateBedData = d3.nest()
     .key(function(d, i, key){
-      return d.gender + " " + d.firstSeperateBed })
+      return d.gender + " " + d.firstSeparateBed })
     .entries(data);
 
-  firstSeperateBedData = firstSeperateBedData.filter(function(d, i){
+  firstSeparateBedData = firstSeparateBedData.filter(function(d, i){
     return d.key != ""; // dont return people who didn't include a gender
   });
 
-  firstSeperateBedData.forEach(function(d,i){
-    var x = firstSeperateBedData[i].values.length;
-    console.log(firstSeperateBedData[i].key + " " + x);
+  firstSeparateBedData.forEach(function(d,i){
+    var x = firstSeparateBedData[i].values.length;
+    //console.log(firstSeparateBedData[i].key + " " + x);
     // console.log(x);
   });
 
+
+  var margin = {top: 100, right: 100, bottom: 100, left: 250},
+      DotChartWidth = 1500 - margin.left - margin.right,
+      DotChartHeight = 1500 - margin.top - margin.bottom;
+
+
+
+// add the graph canvas to the body of the webpage
+var dotChartSVG = d3.select("#dotChartSVG")
+    .attr("width", DotChartWidth + margin.left + margin.right)
+    .attr("height", DotChartHeight + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+var dotChartData = data.filter(function(d, i){
+  return d.separateBeds != "Never"
+});
+  console.log(dotChartData);
+
+var xScale = d3.scaleOrdinal()
+.domain(["Immediately/ We've always slept in separate beds, Within the first 1-5 years of our relationship, Within 6-10 years of our relationship,  Within 11-15 years of our relationship, Within 16-20 years of our relationship, After 20 years of our relationship"])
+.range([100, 300, 500, 700, 900, 1100]);
+
+var yScale = d3.scaleOrdinal()
+.domain(["Strongly disagree", "Somewhat disagree", "Neither agree nor disagree", "Somewhat agree", "Strongly agree"])
+.range([100, 200, 300, 400, 500]);
+
+// .attr("cx", function(d) {
+//   return xScale(d.firstSeparateBed);
+// })
+
+
+var genderDraw = function(d, i){
+  var svg = d3.select("#dotChartSVG").selectAll("g");
+  var circles = svg.selectAll("circle").data(data);
+  // var x = d3.extent(dotChartData, function(d, i){
+  //   return d.values.length;
+  // });
+  var radius = d3.scaleLinear();
+  //console.log(firstSeparateBedData);
+
+  circles.enter().append("circle")
+    .attr("cy", function(d, i){
+      return yScale(d.stayingTogether);
+    })
+    .attr("cx", function(d, i){
+      return xScale(d.firstSeparateBed);
+    })
+    .attr("r", function(d, i){
+      return radius(d.stayingTogether.length);
+      // console.log(d.stayingTogether + "HI!");
+
+    });
+};
+genderDraw();
+
+
+
+    //   // setup x
+    // var xValue = function(d) { return d[d.firstSeparateBed];}, // data -> value
+    //     xScale = d3.scaleLinear().range([0, DotChartWidth]), // value -> display
+    //     xMap = function(d) { return xScale(xValue(d));}, // data -> display
+    //     xAxis = d3.axisBottom(xScale);
+    //
+    // // setup y
+    // var yValue = function(d) { return d[d.stayingTogether];}, // data -> value
+    //     yScale = d3.scaleLinear().range([DotChartHeight, 0]), // value -> display
+    //     yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    //     yAxis = d3.axisLeft(yScale);
 
   console.log(" ");
   console.log("-----------------------------------------------------------------------------");
@@ -196,7 +290,7 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
 
   var relationshipImprove = d3.nest()
         .key(function(d, i, key){
-          return d.gender + " " + d.firstSeperateBed + " " + d.stayingTogether })
+          return d.gender + " " + d.firstSeparateBed + " " + d.stayingTogether })
           .entries(data);
 
   relationshipImprove.forEach(function(d,i){
@@ -214,32 +308,32 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
 
   var sexImproved = d3.nest()
         .key(function(d, i, key){
-          return d.gender + " " + d.firstSeperateBed + " " + d.sexImproved })
+          return d.gender + " " + d.firstSeparateBed + " " + d.sexImproved })
           .entries(data);
 
   sexImproved.forEach(function(d,i){
     var x = sexImproved[i].values.length;
-    console.log(sexImproved[i].key + " " + x);
+  //  console.log(sexImproved[i].key + " " + x);
     // console.log(x);
   });
 
-  // var relationshipImprove = d3.nest()
-  //       .key(function(d, i, key){
-  //         return d.gender + " " + d.firstSeperateBed })
-  //       .key(function(d, i){
-  //         return d.stayingTogether
-  //       })
-  //       .key(function(d, i){
-  //         return d.sexImproved
-  //       })
-  //         .entries(data);
-  //
-  // relationshipImprove.forEach(function(d,i){
-  //   var x = relationshipImprove[i].values.length;
-  //   // console.log(relationshipImprove[i].key + " " + x);
-  //   // console.log(x);
-  // });
-
+//   var relationshipImprove = d3.nest()
+//         .key(function(d, i, key){
+//           return d.gender + " " + d.firstSeperateBed })
+//         .key(function(d, i){
+//           return d.stayingTogether
+//         })
+//         .key(function(d, i){
+//           return d.sexImproved
+//         })
+//           .entries(data);
+//
+//   relationshipImprove.forEach(function(d,i){
+//     var x = relationshipImprove[i].values.length;
+//     // console.log(relationshipImprove[i].key + " " + x);
+//     // console.log(x);
+//   });
+//
 // console.log(relationshipImprove);
 
 console.log(" ");
@@ -291,94 +385,16 @@ function getReasonCounts(keysArray, reasonsArray) {
   })
 };
 
-console.log(getReasonCounts(reasonKeys, reasonsMale));
-console.log(getReasonCounts(reasonKeys, reasonsFemale));
-
-
-
-
-  // var menByLocation = nestedData[0].values.map(function(obj) {
-  //   var newObj = {
-  //     location: obj.key,
-  //     people: obj.values.length
-  //   };
-  //   return newObj;
-  // });
-
-//   console.log(nestedData[0].values.filter(function(d, i){
-//     return d.key == "Pacific";
-//   })[0].values.length, pacificMenLength
-// );
+// console.log(getReasonCounts(reasonKeys, reasonsMale));
+// console.log(getReasonCounts(reasonKeys, reasonsFemale));
 
 
 
 
 
 
-// var genderDraw = function(data){
-//   var svg = d3.select("svg");
-//   var circles = svg.selectAll("circle").data(data);
-//   var genderData = d3.extent(data, function(d, i){
-//     return d.values.length;
-//   });
-//   var radius = d3.scaleLinear();
-//   console.log(genderData);
-//
-//   circles.enter().append("circle")
-//     .attr("cy", 60)
-//     .attr("cx", function(d, i){
-//       return 60 + (120 * i);
-//     })
-//     .attr("r", function(d, i){
-//       return (radius(d.values.length) / 10);
-//     });
-// };
-//
-// var locationDraw = function(data){
-//   var svg = d3.select("svg");
-//   var circles = svg.selectAll("circle").data(data);
-//   var locationData = d3.extent(data, function(d, i){
-//     return d.values.length
-//   });
-// };
 
 
-
-
-
-
-//   var maleLocations = [];
-//   var femaleLocations = [];
-//   var maleMountains = 0;
-//   var femaleMountains = 0;
-//
-//  // var test = nestedData.values.filter(function(d, i){
-//  //   return d.key == "Mountain";
-//  // });
-//
-//   for (var i = 0; i < nestedData[0].values.length; i++){
-//     maleLocations.push(nestedData[0].values[i].location);
-//     if (nestedData[0].values[i].location == "Mountain") {
-//       maleMountains++;
-//     }
-//   };
-//
-// // Make an array
-//   for (var i = 0; i < nestedData[1].values.length; i++){
-//     femaleLocations.push(nestedData[1].values[i].location);
-//     if (nestedData[1].values[i].location == "Mountain") {
-//       femaleMountains++;
-//     }
-//   };
-//
-//
-//   // console.log(test);
-//   console.log(femaleLocations);
-//   console.log(maleLocations);
-//   console.log("Males who live in mountain regions: " + maleMountains);
-//   console.log("Females who live in mountain regions: " + femaleMountains);
-
-  // genderDraw(nestedData);
 });
 
 </script>
