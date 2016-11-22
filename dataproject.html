@@ -247,12 +247,28 @@ var xScale = d3.scaleOrdinal()
   .domain(["Immediately/ We've always slept in separate beds", "Within the first 1-5 years of our relationship", "Within 6-10 years of our relationship", "Within 11-15 years of our relationship", "Within 16-20 years of our relationship", "After 20 years of our relationship"])
   .range([100, 300, 500, 700, 900, 1100]);
 
+var pack = d3.pack()
+    .size([DotChartWidth, DotChartHeight])
+    .padding(1);
+
+var nodes = d3.hierarchy(dotChartData);
+
+    console.log(pack(nodes));
+
 function dotChartfunction(key){
 
-  var circles = dotChartSVG.selectAll("circle").data(dotChartData);
+  var node = dotChartSVG.selectAll(".node")
+      .data(pack(nodes))
+      .enter()
+      .append("g")
+        .attr("class", "node")
+        .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+
+  var circles = dotChartSVG.selectAll("circle").data(nodes);
 
   // enter animation for the first time this function is run
-  circles.enter().append("circle")
+  node.append("circle")
     .attr("cy", function(d){
       return yScale(d[key]);
     })
@@ -290,7 +306,7 @@ d3.select('#relationshipBtn').on('click', function(d, i) {
   dotChartfunction("stayingTogether");
 });
 
-dotChartfunction("stayingTogether");
+// dotChartfunction("stayingTogether");
 
 
 
