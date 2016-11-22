@@ -221,11 +221,16 @@ d3.csv("data/sleeping-alone-data.csv", function(error, data){
   });
 
 
-  var margin = {top: 100, right: 100, bottom: 100, left: 250},
-      DotChartWidth = 1500 - margin.left - margin.right,
-      DotChartHeight = 1500 - margin.top - margin.bottom;
+
+var dotChartData = data.filter(function(d, i){
+  return d.separateBeds != "Never"
+});
+  console.log(dotChartData);
 
 
+var margin = {top: 100, right: 100, bottom: 100, left: 250},
+    DotChartWidth = 1500 - margin.left - margin.right,
+    DotChartHeight = 1500 - margin.top - margin.bottom;
 
 // add the graph canvas to the body of the webpage
 var dotChartSVG = d3.select("#dotChartSVG")
@@ -234,62 +239,62 @@ var dotChartSVG = d3.select("#dotChartSVG")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
-var dotChartData = data.filter(function(d, i){
-  return d.separateBeds != "Never"
-});
-  console.log(dotChartData);
+var yScale = d3.scaleOrdinal()
+  .domain(["Strongly disagree", "Somewhat disagree", "Neither agree nor disagree", "Somewhat agree", "Strongly agree"])
+  .range([100, 200, 300, 400, 500]);
 
 var xScale = d3.scaleOrdinal()
-.domain(["Immediately/ We've always slept in separate beds, Within the first 1-5 years of our relationship, Within 6-10 years of our relationship,  Within 11-15 years of our relationship, Within 16-20 years of our relationship, After 20 years of our relationship"])
-.range([100, 300, 500, 700, 900, 1100]);
+  .domain(["Immediately/ We've always slept in separate beds", "Within the first 1-5 years of our relationship", "Within 6-10 years of our relationship", "Within 11-15 years of our relationship", "Within 16-20 years of our relationship", "After 20 years of our relationship"])
+  .range([100, 300, 500, 700, 900, 1100]);
 
-var yScale = d3.scaleOrdinal()
-.domain(["Strongly disagree", "Somewhat disagree", "Neither agree nor disagree", "Somewhat agree", "Strongly agree"])
-.range([100, 200, 300, 400, 500]);
+function dotChartfunction(key){
 
-// .attr("cx", function(d) {
-//   return xScale(d.firstSeparateBed);
-// })
+  var circles = dotChartSVG.selectAll("circle").data(dotChartData);
 
-
-var genderDraw = function(d, i){
-  var svg = d3.select("#dotChartSVG").selectAll("g");
-  var circles = svg.selectAll("circle").data(data);
-  // var x = d3.extent(dotChartData, function(d, i){
-  //   return d.values.length;
-  // });
-  var radius = d3.scaleLinear();
-  //console.log(firstSeparateBedData);
-
+  // enter animation for the first time this function is run
   circles.enter().append("circle")
-    .attr("cy", function(d, i){
-      return yScale(d.stayingTogether);
+    .attr("cy", function(d){
+      return yScale(d[key]);
     })
-    .attr("cx", function(d, i){
+    .attr("cx", function(d){
       return xScale(d.firstSeparateBed);
     })
-    .attr("r", function(d, i){
-      return radius(d.stayingTogether.length);
-      // console.log(d.stayingTogether + "HI!");
+    .attr("r", 0)
+    .transition().duration(1000)
+    .attr("r", 5);
 
+  // update the x and y coordinates when running this function after the first time
+  circles
+    .transition().duration(1000)
+    .attr("cy", function(d){
+      return yScale(d[key]);
+    })
+    .attr("cx", function(d){
+      return xScale(d.firstSeparateBed);
     });
-};
-genderDraw();
+
+  // ...technically, as is, this exit animation will never run, because the data does not change (only the key used to position the circles)
+  circles.exit()
+    .transition().duration(1000).ease("exp")
+    .attr("r", 0)
+    .remove();
+
+}
+
+// simply pass the key to be used to the function as a string
+d3.select('#sexBtn').on('click', function(d, i) {
+  dotChartfunction("sexImproved");
+})
+
+d3.select('#relationshipBtn').on('click', function(d, i) {
+  dotChartfunction("stayingTogether");
+});
+
+dotChartfunction("stayingTogether");
 
 
 
-    //   // setup x
-    // var xValue = function(d) { return d[d.firstSeparateBed];}, // data -> value
-    //     xScale = d3.scaleLinear().range([0, DotChartWidth]), // value -> display
-    //     xMap = function(d) { return xScale(xValue(d));}, // data -> display
-    //     xAxis = d3.axisBottom(xScale);
-    //
-    // // setup y
-    // var yValue = function(d) { return d[d.stayingTogether];}, // data -> value
-    //     yScale = d3.scaleLinear().range([DotChartHeight, 0]), // value -> display
-    //     yMap = function(d) { return yScale(yValue(d));}, // data -> display
-    //     yAxis = d3.axisLeft(yScale);
+
 
   console.log(" ");
   console.log("-----------------------------------------------------------------------------");
