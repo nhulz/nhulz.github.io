@@ -34,6 +34,8 @@ h2
 
 p
   font-family: 'American Typewriter'
+  line-height: 22px
+  color: $gray
 
 
 /* Utility styles */
@@ -48,9 +50,20 @@ button:hover
   color: white
   background-color: black
 
-button:active
+button.active
   color: white
   background-color: black
+
+.noSelect
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
+  outline: 0
+
 
 /* Section specific Styles */
 
@@ -70,8 +83,6 @@ section#mainTitle
       padding-left: 4em
 
 
-
-
 section#pieChartSection
   width: 100vw
   #pieChartSVG
@@ -79,24 +90,17 @@ section#pieChartSection
     display: block
     margin: 0 auto
 
-
-
-
 section#dotChartSection
   .text-container
     margin: 20em 0 0 20em
   #dotChartTitle
-    width: 500px
+    width: 510px
 
 // .circleChartBtnGroup
-
-
 button.dotChartBtn
   padding: .7em 1em .7em 1em
   margin: 1em 1.5em 0 0
   width: 200px
-
-
 
 
 
@@ -110,14 +114,14 @@ button.dotChartBtn
 div.toolTip
   position: absolute
   text-align: center
-  width: 100px
-  height: 100px
-  padding: 2px
+  padding: 10px
   font: 12px sans-serif
-  background: lightsteelblue
-  border: 0px
-  border-radius: 8px
+  background: white
+  border: 2px black solid
   pointer-events: none
+  font-family: 'Roboto Mono'
+  display: inline-block
+
 
 .small-p
   width: 400px
